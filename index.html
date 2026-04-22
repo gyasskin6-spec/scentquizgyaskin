@@ -389,7 +389,7 @@
   <div id="s1" class="scr">
     <div class="prog-track"><div class="prog-fill" style="width:20%"></div></div>
     <div class="step-tag">Question 1 of 5</div>
-    <div class="qtext">What's your biggest skin concern right now?</div>
+    <div class="qtext">What's your concern about switching to natural deodorant?</div>
     <div class="qsub">Pick one</div>
     <div class="opts" id="o1"></div>
     <div class="btnrow">
@@ -437,7 +437,7 @@
   <div id="s5" class="scr">
     <div class="prog-track"><div class="prog-fill" style="width:95%"></div></div>
     <div class="step-tag">Question 5 of 5</div>
-    <div class="qtext">How do you move through your day?</div>
+    <div class="qtext">How would you describe your activity through the day?</div>
     <div class="qsub">Pick one</div>
     <div class="opts" id="o5"></div>
     <div class="btnrow">
@@ -465,6 +465,7 @@
     <div class="res-name" id="rName"></div>
     <div class="res-variant" id="rVariant"></div>
     <div class="res-desc" id="rDesc"></div>
+    <div id="rBenefits" style="margin-bottom:1.5rem"></div>
     <div class="disc-box">
       <div class="disc-label">Your exclusive discount</div>
       <div class="disc-row">
@@ -478,24 +479,33 @@
         </button>
       </div>
     </div>
-    <a href="https://gyaskin.com/products/gyaskin-mini-discovery-pack" class="btn-shop">Shop discovery pack &rarr;</a>
+    <a href="https://gyaskin.com/products/gyaskin-mini-discovery-pack" class="btn-shop" target="_blank" rel="noopener">Shop discovery pack &rarr;</a>
   </div>
 
 </div>
+
+<style>
+  .benefits-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .benefit-item { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: #333; line-height: 1.5; }
+  .benefit-icon { width: 22px; height: 22px; border-radius: 50%; background: #dbf649; border: 2px solid #111; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+  .benefit-icon svg { width: 10px; height: 10px; }
+</style>
 
 <script>
 (function(){
   var A={};
   var Q=[
     {id:'o1',nxt:'n1',opts:[
-      {l:'Unwanted body odour',s:'Odour control is my priority',v:'odour'},
-      {l:'Skin irritation or redness',s:'My skin reacts easily',v:'sensitive'},
-      {l:'Sweating more than I\'d like',s:'I want to feel dry all day',v:'sweat'},
-      {l:'Finding a natural alternative',s:'I\'m switching from conventional deo',v:'natural'}
+      {l:'The Detox Period',s:'My body may need time to adjust',v:'detox'},
+      {l:'Deodorant may not work',s:'I\'m not sure natural deo is effective',v:'performance'},
+      {l:'Skin Sensitivity and Rashes',s:'My skin reacts easily',v:'sensitivity'},
+      {l:'The Price Tag',s:'Natural products can be expensive',v:'price'},
+      {l:'Staining and Texture Issues',s:'I\'ve had problems with residue before',v:'staining'}
     ]},
     {id:'o2',nxt:'n2',opts:[
-      {l:'Normal or resilient',s:'No known reactions to products',v:'regular'},
-      {l:'Sensitive or reactive',s:'Baking soda or fragrances can irritate me',v:'sensitive'}
+      {l:'Normal',s:'No known reactions to products',v:'normal'},
+      {l:'Sensitive',s:'Baking soda or fragrances can irritate me',v:'sensitive'},
+      {l:'Dry',s:'My skin often feels tight or dehydrated',v:'dry'}
     ]},
     {id:'o3',nxt:'n3',opts:[
       {l:'Fresh and citrusy',s:'Bright, clean, energising',v:'citrus'},
@@ -511,12 +521,13 @@
       {l:'A scent I actually love',s:'The fragrance experience matters',v:'scent'}
     ]},
     {id:'o5',nxt:'n5',opts:[
-      {l:'Active and on the move',s:'Gym, commute, busy schedule',v:'active'},
-      {l:'Calm and considered',s:'Slow mornings, mindful routine',v:'calm'},
-      {l:'Creative and expressive',s:'Scent is part of my identity',v:'creative'},
-      {l:'Practical and no-fuss',s:'Just needs to work every day',v:'practical'}
+      {l:'Light',s:'Mostly desk-based, relaxed days',v:'light'},
+      {l:'Moderate',s:'A mix of active and restful',v:'moderate'},
+      {l:'High intensity',s:'Regular workouts, always on the go',v:'high'},
+      {l:'Varies day to day',s:'No two days are the same',v:'varies'}
     ]}
   ];
+
   var SCENTS={
     earth:{name:'Earth',variant:'Bergamot · Patchouli · Cedar',desc:'Sophisticated, woody and just a little seductive. A smooth blend of bergamot, lemon, patchouli and cedarwood — calm confidence in a tin.'},
     slate:{name:'Slate',variant:'Fragrance-free · Sensitive formula',desc:'Our gentlest 100% natural deodorant. No fragrance, no baking soda — just hardworking natural ingredients that tackle odour from every angle.'},
@@ -525,6 +536,49 @@
     zest:{name:'Zest',variant:'Orange · Sage · Palmarosa · Vanilla',desc:'Warm modern floral-woody with soft sweetness. Fresh opens to warmth — a sophisticated everyday scent that works from desk to gym.'},
     burst:{name:'Burst',variant:'Lime · Pink Grapefruit · Citrus',desc:'Sharp, sparkling and energising. A full-on citrus hit — crisp lime and juicy grapefruit with a clean, airy finish.'}
   };
+
+  var CONCERN_BENEFITS={
+    detox:'Most people adjust within 7–14 days and never look back',
+    performance:'Carefully crafted with zinc, magnesium and arrowroot — each one working hard so you don\'t have to',
+    sensitivity:'No baking soda, no fragrance — made for reactive skin',
+    price:'One discovery pack, six scents — find your match before committing',
+    staining:'Creamy balm texture glides on clear — no residue, no staining'
+  };
+
+  var PRICE_EXTRA='Your 20% discount is already applied — try it risk-free';
+
+  var SKIN_BENEFITS={
+    sensitive:'Sensitive skin matched to our bicarb-free formula — zero irritation, full protection',
+    dry:'Dry skin loves our shea and MCT-rich base — it nourishes as it protects',
+    normal:'48-hour protection with clean, plant-powered ingredients — nothing harsh, nothing unnecessary'
+  };
+
+  var FIXED_BENEFITS=[
+    'Aluminium-free — no blocked pores, no compromise on protection',
+    'Applies clear, dries clean — no white marks or transfer',
+    'Natural ingredients at active levels — not just label dressing'
+  ];
+
+  function getBenefits(concern, skin){
+    var list=[];
+    if(concern && CONCERN_BENEFITS[concern]) list.push(CONCERN_BENEFITS[concern]);
+    if(concern==='price') list.push(PRICE_EXTRA);
+    if(skin && SKIN_BENEFITS[skin]) list.push(SKIN_BENEFITS[skin]);
+    var fi=0;
+    while(list.length<5 && fi<FIXED_BENEFITS.length){
+      list.push(FIXED_BENEFITS[fi]);fi++;
+    }
+    return list.slice(0,5);
+  }
+
+  function renderBenefits(benefits){
+    var html='<ul class="benefits-list">';
+    benefits.forEach(function(b){
+      html+='<li class="benefit-item"><span class="benefit-icon"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>'+b+'</span></li>';
+    });
+    html+='</ul>';
+    document.getElementById('rBenefits').innerHTML=html;
+  }
 
   function buildOpts(){
     Q.forEach(function(q){
@@ -557,35 +611,37 @@
   };
 
   window.showResult=function(){
-    var skin=A['o2'],scent=A['o3'],priority=A['o4'],key,formula;
-    if(scent==='none'||priority==='gentle'){
+    var concern=A['o1'],skin=A['o2'],scent=A['o3'],priority=A['o4'],key,formula;
+    if(scent==='none'||priority==='gentle'||skin==='sensitive'){
       key='slate';formula='Sensitive formula · Fragrance-free · No baking soda';
     } else {
       var map={citrus:'burst',earthy:'earth',floral:'bloom',sweet:'coconut'};
       key=map[scent]||'zest';
-      formula=skin==='sensitive'?'Sensitive formula · No baking soda':'Regular formula · Extra-strength';
+      formula=skin==='dry'?'Regular formula · Nourishing base':'Regular formula · Extra-strength';
     }
     var s=SCENTS[key];
     document.getElementById('rName').textContent=s.name;
     document.getElementById('rVariant').textContent=formula+' · '+s.variant;
     document.getElementById('rDesc').textContent=s.desc;
+    renderBenefits(getBenefits(concern,skin));
 
-    // Send email to Klaviyo
     var email=document.getElementById('emailIn').value;
     if(email){
-      fetch('https://a.klaviyo.com/client/subscriptions/?company_id=YOUR_KLAVIYO_PUBLIC_KEY',{
+      fetch('https://a.klaviyo.com/client/subscriptions/?company_id=VTW8TA',{
         method:'POST',
         headers:{'content-type':'application/json','revision':'2023-02-22'},
         body:JSON.stringify({
           data:{
             type:'subscription',
             attributes:{
-              list_id:'YOUR_KLAVIYO_LIST_ID',
+              list_id:'QQaT5u',
               custom_source:'Scent Quiz',
               email:email,
               properties:{
                 scent_match:s.name,
                 formula_match:formula,
+                skin_type:skin,
+                main_concern:concern,
                 quiz_source:'github'
               }
             }
@@ -593,7 +649,6 @@
         })
       }).catch(function(){});
     }
-
     go(7);
   };
 
