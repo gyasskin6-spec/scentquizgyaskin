@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Your Scent — GYA Skin</title>
+  <meta name="description" content="Answer 5 quick questions and find your perfect natural deodorant from GYA Skin.">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: #fff;
+      font-family: 'Barlow', sans-serif;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #quiz {
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .scr {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: clamp(1.5rem, 5vw, 3rem) clamp(1.25rem, 6vw, 4rem);
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .scr.on { display: flex; }
+
+    .prog-track {
+      height: 3px;
+      background: #e8e8e8;
+      width: 100%;
+      margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+      flex-shrink: 0;
+    }
+
+    .prog-fill {
+      height: 3px;
+      background: #111;
+      transition: width 0.4s ease;
+    }
+
+    .step-tag {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 0.6rem;
+      font-weight: 400;
+    }
+
+    .qtext {
+      font-size: clamp(22px, 5vw, 32px);
+      font-weight: 800;
+      line-height: 1.15;
+      color: #111;
+      margin-bottom: 0.4rem;
+    }
+
+    .qsub {
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .opts {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .opt {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 18px;
+      border: 2px solid #e0e0e0;
+      cursor: pointer;
+      background: #fff;
+      text-align: left;
+      font-family: 'Barlow', sans-serif;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .opt:hover { border-color: #aaa; }
+    .opt.sel { border-color: #111; background: #fafafa; }
+
+    .chk {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ccc;
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .opt.sel .chk { background: #111; border-color: #111; }
+
+    .tick {
+      width: 10px;
+      height: 6px;
+      border-left: 2px solid #dbf649;
+      border-bottom: 2px solid #dbf649;
+      transform: rotate(-45deg) translateY(-1px);
+      display: none;
+    }
+
+    .opt.sel .tick { display: block; }
+
+    .olabel {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111;
+      display: block;
+      line-height: 1.3;
+    }
+
+    .osub {
+      font-size: 13px;
+      color: #888;
+      font-weight: 400;
+      margin-top: 3px;
+      display: block;
+      line-height: 1.4;
+    }
+
+    .btnrow {
+      display: flex;
+      gap: 10px;
+      padding-top: 1.75rem;
+      flex-shrink: 0;
+    }
+
+    .bbk {
+      width: 54px;
+      height: 54px;
+      border: 2px solid #111;
+      background: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #111;
+      font-family: 'Barlow', sans-serif;
+      transition: background 0.15s;
+    }
+
+    .bbk:hover { background: #f0f0f0; }
+
+    .bnxt {
+      flex: 1;
+      height: 54px;
+      background: #dbf649;
+      border: 2px solid #111;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #111;
+      transition: background 0.15s;
+    }
+
+    .bnxt:hover { background: #cde030; }
+
+    .bnxt:disabled {
+      background: #efefef;
+      color: #bbb;
+      border-color: #ddd;
+      cursor: default;
+    }
+
+    .email-input {
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid #e0e0e0;
+      padding: 14px 0;
+      font-size: 18px;
+      font-family: 'Barlow', sans-serif;
+      color: #111;
+      background: transparent;
+      outline: none;
+      margin-top: 0.5rem;
+    }
+
+    .email-input:focus { border-bottom-color: #111; }
+    .email-input::placeholder { color: #ccc; }
+
+    .intro-logo {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 2.5rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 2px solid #111;
+    }
+
+    .intro-h {
+      font-size: clamp(28px, 7vw, 44px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: #111;
+      margin-bottom: 1rem;
+    }
+
+    .intro-p {
+      font-size: 15px;
+      color: #666;
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+    }
+
+    .intro-meta {
+      font-size: 12px;
+      color: #999;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 400;
+      padding: 1rem 0;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+
+    .bstart {
+      width: 100%;
+      height: 56px;
+      background: #dbf649;
+      border: 2px solid #111;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #111;
+      margin-top: 2rem;
+      transition: background 0.15s;
+    }
+
+    .bstart:hover { background: #cde030; }
+
+    .res-badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: #dbf649;
+      border: 2px solid #111;
+      padding: 5px 14px;
+      color: #111;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      align-self: flex-start;
+    }
+
+    .res-name {
+      font-size: clamp(32px, 9vw, 52px);
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 0.3rem;
+      line-height: 1.05;
+    }
+
+    .res-variant {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 1rem;
+      font-weight: 400;
+    }
+
+    .res-desc {
+      font-size: 15px;
+      color: #444;
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+      border-top: 1px solid #eee;
+      padding-top: 1rem;
+    }
+
+    .disc-box {
+      background: #111;
+      padding: 1.35rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .disc-label {
+      color: #aaa;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      font-weight: 400;
+    }
+
+    .disc-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .disc-code {
+      font-size: clamp(22px, 6vw, 30px);
+      font-weight: 800;
+      color: #dbf649;
+      letter-spacing: 0.06em;
+    }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: 1.5px solid #444;
+      padding: 7px 14px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-size: 12px;
+      color: #aaa;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .copy-btn:hover, .copy-btn.copied { border-color: #dbf649; color: #dbf649; }
+
+    .btn-shop {
+      width: 100%;
+      height: 56px;
+      background: #dbf649;
+      border: 2px solid #111;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #111;
+      transition: background 0.15s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-shop:hover { background: #cde030; }
+  </style>
+</head>
+<body>
+
+<div id="quiz">
+
+  <div id="s0" class="scr on">
+    <div class="intro-logo">GYA Skin</div>
+    <div style="flex:1">
+      <div class="intro-h">Find your perfect deodorant — in 60 seconds.</div>
+      <div class="intro-p">Answer 5 quick questions and we'll match you to the scent and formula made for your skin and your vibe.</div>
+      <div class="intro-meta">5 questions &nbsp;·&nbsp; 60 seconds &nbsp;·&nbsp; 20% off at the end</div>
+    </div>
+    <button class="bstart" onclick="go(1)">Start the quiz &rarr;</button>
+  </div>
+
+  <div id="s1" class="scr">
+    <div class="prog-track"><div class="prog-fill" style="width:20%"></div></div>
+    <div class="step-tag">Question 1 of 5</div>
+    <div class="qtext">What's your biggest skin concern right now?</div>
+    <div class="qsub">Pick one</div>
+    <div class="opts" id="o1"></div>
+    <div class="btnrow">
+      <button class="bbk" onclick="go(0)">&#8592;</button>
+      <button class="bnxt" id="n1" onclick="go(2)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <div id="s2" class="scr">
+    <div class="prog-track"><div class="prog-fill" style="width:40%"></div></div>
+    <div class="step-tag">Question 2 of 5</div>
+    <div class="qtext">How would you describe your skin?</div>
+    <div class="qsub">This helps us find your right formula</div>
+    <div class="opts" id="o2"></div>
+    <div class="btnrow">
+      <button class="bbk" onclick="go(1)">&#8592;</button>
+      <button class="bnxt" id="n2" onclick="go(3)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <div id="s3" class="scr">
+    <div class="prog-track"><div class="prog-fill" style="width:60%"></div></div>
+    <div class="step-tag">Question 3 of 5</div>
+    <div class="qtext">What kind of scent do you usually reach for?</div>
+    <div class="qsub">Pick one</div>
+    <div class="opts" id="o3"></div>
+    <div class="btnrow">
+      <button class="bbk" onclick="go(2)">&#8592;</button>
+      <button class="bnxt" id="n3" onclick="go(4)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <div id="s4" class="scr">
+    <div class="prog-track"><div class="prog-fill" style="width:80%"></div></div>
+    <div class="step-tag">Question 4 of 5</div>
+    <div class="qtext">What matters most to you in a deodorant?</div>
+    <div class="qsub">Pick one</div>
+    <div class="opts" id="o4"></div>
+    <div class="btnrow">
+      <button class="bbk" onclick="go(3)">&#8592;</button>
+      <button class="bnxt" id="n4" onclick="go(5)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <div id="s5" class="scr">
+    <div class="prog-track"><div class="prog-fill" style="width:95%"></div></div>
+    <div class="step-tag">Question 5 of 5</div>
+    <div class="qtext">How do you move through your day?</div>
+    <div class="qsub">Pick one</div>
+    <div class="opts" id="o5"></div>
+    <div class="btnrow">
+      <button class="bbk" onclick="go(4)">&#8592;</button>
+      <button class="bnxt" id="n5" onclick="go(6)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <div id="s6" class="scr">
+    <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+    <div class="step-tag">Almost there</div>
+    <div class="qtext">Where should we send your match?</div>
+    <div class="qsub">Enter your email to reveal your scent and unlock 20% off your discovery pack</div>
+    <input type="email" class="email-input" id="emailIn" placeholder="your@email.com" oninput="checkEmail()">
+    <div style="flex:1"></div>
+    <div class="btnrow">
+      <button class="bbk" onclick="go(5)">&#8592;</button>
+      <button class="bnxt" id="n6" onclick="showResult()" disabled>Reveal my match &rarr;</button>
+    </div>
+  </div>
+
+  <div id="s7" class="scr">
+    <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+    <div class="res-badge">Your match</div>
+    <div class="res-name" id="rName"></div>
+    <div class="res-variant" id="rVariant"></div>
+    <div class="res-desc" id="rDesc"></div>
+    <div class="disc-box">
+      <div class="disc-label">Your exclusive discount</div>
+      <div class="disc-row">
+        <div class="disc-code">GYAMATCH20</div>
+        <button class="copy-btn" id="copyBtn" onclick="copyCode()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <rect x="4" y="4" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M2 10V2h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+          </svg>
+          <span id="copyTxt">Copy</span>
+        </button>
+      </div>
+    </div>
+    <a href="https://gyaskin.com/products/gyaskin-mini-discovery-pack" class="btn-shop">Shop discovery pack &rarr;</a>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var A={};
+  var Q=[
+    {id:'o1',nxt:'n1',opts:[
+      {l:'Unwanted body odour',s:'Odour control is my priority',v:'odour'},
+      {l:'Skin irritation or redness',s:'My skin reacts easily',v:'sensitive'},
+      {l:'Sweating more than I\'d like',s:'I want to feel dry all day',v:'sweat'},
+      {l:'Finding a natural alternative',s:'I\'m switching from conventional deo',v:'natural'}
+    ]},
+    {id:'o2',nxt:'n2',opts:[
+      {l:'Normal or resilient',s:'No known reactions to products',v:'regular'},
+      {l:'Sensitive or reactive',s:'Baking soda or fragrances can irritate me',v:'sensitive'}
+    ]},
+    {id:'o3',nxt:'n3',opts:[
+      {l:'Fresh and citrusy',s:'Bright, clean, energising',v:'citrus'},
+      {l:'Warm and earthy',s:'Grounded, woody, confident',v:'earthy'},
+      {l:'Soft and floral',s:'Botanical, gentle, calm-luxury',v:'floral'},
+      {l:'Sweet and creamy',s:'Cosy, warm, comforting',v:'sweet'},
+      {l:'No scent at all',s:'Fragrance-free is best for me',v:'none'}
+    ]},
+    {id:'o4',nxt:'n4',opts:[
+      {l:'Maximum odour protection',s:'I need extra-strength performance',v:'strength'},
+      {l:'Gentle on my skin',s:'Sensitive-friendly above all',v:'gentle'},
+      {l:'Clean natural ingredients',s:'Plant-powered only',v:'clean'},
+      {l:'A scent I actually love',s:'The fragrance experience matters',v:'scent'}
+    ]},
+    {id:'o5',nxt:'n5',opts:[
+      {l:'Active and on the move',s:'Gym, commute, busy schedule',v:'active'},
+      {l:'Calm and considered',s:'Slow mornings, mindful routine',v:'calm'},
+      {l:'Creative and expressive',s:'Scent is part of my identity',v:'creative'},
+      {l:'Practical and no-fuss',s:'Just needs to work every day',v:'practical'}
+    ]}
+  ];
+  var SCENTS={
+    earth:{name:'Earth',variant:'Bergamot · Patchouli · Cedar',desc:'Sophisticated, woody and just a little seductive. A smooth blend of bergamot, lemon, patchouli and cedarwood — calm confidence in a tin.'},
+    slate:{name:'Slate',variant:'Fragrance-free · Sensitive formula',desc:'Our gentlest 100% natural deodorant. No fragrance, no baking soda — just hardworking natural ingredients that tackle odour from every angle.'},
+    bloom:{name:'Bloom',variant:'Orange · Lavender · Rose · Vanilla',desc:'Soft citrus opening into a floral heart with a creamy woody drydown. Botanical, calm-luxury — like a garden at golden hour.'},
+    coconut:{name:'Coconut & Vanilla',variant:'Coconut · Vanilla · Palmarosa',desc:'Warm, creamy and cosy. A sweet tropical-meets-floral blend that feels like a little moment of comfort every morning.'},
+    zest:{name:'Zest',variant:'Orange · Sage · Palmarosa · Vanilla',desc:'Warm modern floral-woody with soft sweetness. Fresh opens to warmth — a sophisticated everyday scent that works from desk to gym.'},
+    burst:{name:'Burst',variant:'Lime · Pink Grapefruit · Citrus',desc:'Sharp, sparkling and energising. A full-on citrus hit — crisp lime and juicy grapefruit with a clean, airy finish.'}
+  };
+
+  function buildOpts(){
+    Q.forEach(function(q){
+      var el=document.getElementById(q.id);
+      q.opts.forEach(function(o){
+        var b=document.createElement('button');
+        b.className='opt';
+        b.dataset.val=o.v;
+        b.innerHTML='<span class="chk"><span class="tick"></span></span><span><span class="olabel">'+o.l+'</span>'+(o.s?'<span class="osub">'+o.s+'</span>':'')+'</span>';
+        b.onclick=function(){
+          el.querySelectorAll('.opt').forEach(function(x){x.classList.remove('sel');});
+          b.classList.add('sel');
+          A[q.id]=o.v;
+          document.getElementById(q.nxt).disabled=false;
+        };
+        el.appendChild(b);
+      });
+    });
+  }
+
+  window.go=function(n){
+    document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on');});
+    document.getElementById('s'+n).classList.add('on');
+    window.scrollTo(0,0);
+  };
+
+  window.checkEmail=function(){
+    var v=document.getElementById('emailIn').value;
+    document.getElementById('n6').disabled=!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  };
+
+  window.showResult=function(){
+    var skin=A['o2'],scent=A['o3'],priority=A['o4'],key,formula;
+    if(scent==='none'||priority==='gentle'){
+      key='slate';formula='Sensitive formula · Fragrance-free · No baking soda';
+    } else {
+      var map={citrus:'burst',earthy:'earth',floral:'bloom',sweet:'coconut'};
+      key=map[scent]||'zest';
+      formula=skin==='sensitive'?'Sensitive formula · No baking soda':'Regular formula · Extra-strength';
+    }
+    var s=SCENTS[key];
+    document.getElementById('rName').textContent=s.name;
+    document.getElementById('rVariant').textContent=formula+' · '+s.variant;
+    document.getElementById('rDesc').textContent=s.desc;
+
+    // Send email to Klaviyo
+    var email=document.getElementById('emailIn').value;
+    if(email){
+      fetch('https://a.klaviyo.com/client/subscriptions/?company_id=YOUR_KLAVIYO_PUBLIC_KEY',{
+        method:'POST',
+        headers:{'content-type':'application/json','revision':'2023-02-22'},
+        body:JSON.stringify({
+          data:{
+            type:'subscription',
+            attributes:{
+              list_id:'YOUR_KLAVIYO_LIST_ID',
+              custom_source:'Scent Quiz',
+              email:email,
+              properties:{
+                scent_match:s.name,
+                formula_match:formula,
+                quiz_source:'github'
+              }
+            }
+          }
+        })
+      }).catch(function(){});
+    }
+
+    go(7);
+  };
+
+  window.copyCode=function(){
+    navigator.clipboard.writeText('GYAMATCH20').then(function(){
+      var btn=document.getElementById('copyBtn'),txt=document.getElementById('copyTxt');
+      btn.classList.add('copied');txt.textContent='Copied!';
+      setTimeout(function(){btn.classList.remove('copied');txt.textContent='Copy';},2000);
+    }).catch(function(){
+      document.getElementById('copyTxt').textContent='GYAMATCH20';
+      setTimeout(function(){document.getElementById('copyTxt').textContent='Copy';},2000);
+    });
+  };
+
+  buildOpts();
+})();
+</script>
+</body>
+</html>
