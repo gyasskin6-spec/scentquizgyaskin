@@ -256,7 +256,7 @@
       letter-spacing: 0.07em;
       text-transform: uppercase;
       color: #111;
-      margin-top: 2rem;
+      margin-top: 1.5rem;
       transition: background 0.15s;
     }
 
@@ -378,12 +378,10 @@
 <div id="quiz">
 
   <div id="s0" class="scr on">
-    <div class="intro-logo">GYA Skin</div>
-    <div style="flex:1">
-      <div class="intro-h">Find your perfect deodorant — in 60 seconds.</div>
-      <div class="intro-p">Answer 5 quick questions and we'll match you to the scent and formula made for your skin and your vibe.</div>
-      <div class="intro-meta">5 questions &nbsp;·&nbsp; 60 seconds &nbsp;·&nbsp; 20% off at the end</div>
-    </div>
+    <div class="intro-logo">GYASKIN</div>
+    <div class="intro-h">Find your perfect deodorant — in 60 seconds.</div>
+    <div class="intro-p">Answer 5 quick questions and we'll match you to the scent and formula made for your skin and your vibe.</div>
+    <div class="intro-meta">5 questions &nbsp;·&nbsp; 60 seconds &nbsp;·&nbsp; 20% off at the end</div>
     <button class="bstart" onclick="go(1)">Start the quiz &rarr;</button>
   </div>
 
@@ -453,8 +451,7 @@
     <div class="qtext">Where should we send your match?</div>
     <div class="qsub">Enter your email to reveal your scent and unlock 20% off your discovery pack</div>
     <input type="email" class="email-input" id="emailIn" placeholder="your@email.com" oninput="checkEmail()">
-    <div style="flex:1"></div>
-    <div class="btnrow">
+    <div class="btnrow" style="padding-top:1rem;">
       <button class="bbk" onclick="go(5)">&#8592;</button>
       <button class="bnxt" id="n6" onclick="showResult()" disabled>Reveal my match &rarr;</button>
     </div>
